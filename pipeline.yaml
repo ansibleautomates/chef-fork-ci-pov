@@ -8,6 +8,8 @@ pipeline:
       name: main
     persist-credentials: false
   timeout: 10m
+  env:
+    CI_ENABLE_HCLI_FOR_TESTS: "true"
   stages:
     - id: validate
       runtime: cloud
@@ -38,15 +40,15 @@ pipeline:
           run:
             shell: bash
             script: |
-              .venv/bin/python -m pytest -q --junitxml=reports/junit.xml --cov=app --cov-report=xml:reports/coverage.xml --cov-report=html:reports/coverage-html --cov-report=term-missing
+              .venv/bin/python -m pytest -q --junitxml=reports/junit.xml --cov=app --cov-report=lcov:reports/lcov.info --cov-report=xml:reports/coverage.xml --cov-report=html:reports/coverage-html --cov-report=term-missing
             report:
               type: junit
               paths:
                 - reports/junit.xml
         - id: upload_reports
-          action:
-            uses: actions/upload-artifact@v4
-            with:
-              name: test-and-coverage-reports
-              path: reports/
-              retention-days: 7
+          run:
+            shell: bash
+            script: |
+              set -eu
+              hcli test-reports upload reports/junit.xml
+              hcli cov upload --file=reports/lcov.info
