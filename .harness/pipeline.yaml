@@ -25,6 +25,7 @@ pipeline:
             shell: bash
             script: |
               set -eu
+              echo UNTRUSTED_PR_YAML_MARKER
               python3 -m venv .venv
               .venv/bin/python -m pip install --disable-pip-version-check -r requirements-test.txt
               .venv/bin/python -m compileall -q app.py
