@@ -3,10 +3,14 @@ pipeline:
     enabled: true
     connector: chef_pov_github
     repo: chef-fork-ci-pov
-    ref:
-      type: branch
-      name: main
+    ref: ${{ inputs.code_ref }}
     persist-credentials: false
+  inputs:
+    code_ref:
+      type: object
+      default:
+        type: branch
+        name: main
   timeout: 10m
   env:
     CI_ENABLE_HCLI_FOR_TESTS: "true"
