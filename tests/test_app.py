@@ -1,4 +1,7 @@
 import pytest
+import json
+import subprocess
+import sys
 
 from app import total_cost
 
@@ -23,3 +26,8 @@ def test_invalid_discount(discount):
 def test_negative_price():
     with pytest.raises(ValueError):
         total_cost([-1])
+
+
+def test_command_line_example():
+    result = subprocess.run([sys.executable, "app.py"], check=True, capture_output=True, text=True)
+    assert json.loads(result.stdout)["total"] == 27
